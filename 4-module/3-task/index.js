@@ -1,6 +1,6 @@
 function highlight(table) {
   // ваш код...
-  let trs = table.rows;
+  let trs = table.querySelector('tbody').rows;
 
   for (tr of trs) {
     let age = tr.cells[1];
