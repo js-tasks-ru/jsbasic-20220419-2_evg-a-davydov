@@ -7,13 +7,13 @@ function highlight(table) {
     let gender = tr.cells[2];
     let status = tr.cells[3];
 
-    if (status.getAttribute('data-available') == 'true') {
+    if (status.dataset.available == 'true') {
       tr.classList.add('available');
     } else {
       tr.classList.add('unavailable');
     }
 
-    tr.hidden = !(status.hasAttribute('data-available'));
+    tr.hidden = !(status.dataset.available);
 
     if (gender.textContent == 'm') {
       tr.classList.add('male');
