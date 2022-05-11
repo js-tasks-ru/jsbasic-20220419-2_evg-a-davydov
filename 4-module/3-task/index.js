@@ -1,28 +1,28 @@
 function highlight(table) {
   // ваш код...
-  let tr = table.rows;
+  let trs = table.rows;
 
-  for (let i = 1; i < tr.length; i++) {
-    let age = tr[i].cells[1];
-    let gender = tr[i].cells[2];
-    let status = tr[i].cells[3];
+  for (tr of trs) {
+    let age = tr.cells[1];
+    let gender = tr.cells[2];
+    let status = tr.cells[3];
 
     if (status.getAttribute('data-available') == 'true') {
-      tr[i].classList.add('available');
+      tr.classList.add('available');
     } else {
-      tr[i].classList.add('unavailable');
+      tr.classList.add('unavailable');
     }
 
-    tr[i].hidden = !(status.hasAttribute('data-available'));
+    tr.hidden = !(status.hasAttribute('data-available'));
 
     if (gender.textContent == 'm') {
-      tr[i].classList.add('male');
+      tr.classList.add('male');
     } else {
-      tr[i].classList.add('female');
+      tr.classList.add('female');
     }
 
     if (+age.textContent < 18) {
-      tr[i].style.textDecoration = 'line-through';
+      tr.style.textDecoration = 'line-through';
     }
   } 
 }
