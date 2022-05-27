@@ -14,9 +14,9 @@
  */
 export default class UserTable {
   constructor(rows) {
-    this._table = document.createElement('TABLE');
+    const table = document.createElement('TABLE');
     
-    this._table.innerHTML = `
+    table.innerHTML = `
       <thead>
         <tr>
           <th>Имя</th>
@@ -28,21 +28,23 @@ export default class UserTable {
       </thead>
     `;
 
-    this.addTableElements(this._table, rows);
+    this.addTableElements(table, rows);
+
+    this.table = table;
   }
 
   get elem() {
-    return this._table;
+    return this.table;
   }
 
   addTableElements(table, rows) {
-    table.innerHTML += rows.map(item => {
+    table.innerHTML += rows.map(row => {
       return `
         <tr>
-          <td>${item.name}</td>
-          <td>${item.age}</td>
-          <td>${item.salary}</td>
-          <td>${item.city}</td>
+          <td>${row.name}</td>
+          <td>${row.age}</td>
+          <td>${row.salary}</td>
+          <td>${row.city}</td>
           <td><button>X</button></td>
         </tr>
       `;
