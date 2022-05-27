@@ -14,30 +14,34 @@
  */
 export default class UserTable {
   constructor(rows) {
-    this.elem = this.createTable();
-    this.addTableElements(this.elem, rows);
+    this.elem = function() {
+      const table = document.createElement('TABLE');
+      const tBody = document.createElement('TBODY');
+
+      table.innerHTML = `
+        <thead>
+          <tr>
+            <th>Имя</th>
+            <th>Возраст</th>
+            <th>Зарплата</th>
+            <th>Город</th>
+            <th></th>
+          </tr>
+        </thead>
+      `;
+
+      table.append(tBody);
+
+      return table;
+    }();
+
+    const tBody = this.elem.querySelector('tbody');
+
+    this.addTableElements(tBody, rows);
   }
 
-  createTable() {
-    const table = document.createElement('TABLE');
-
-    table.innerHTML = `
-      <thead>
-        <tr>
-          <th>Имя</th>
-          <th>Возраст</th>
-          <th>Зарплата</th>
-          <th>Город</th>
-          <th></th>
-        </tr>
-      </thead>
-    `;
-
-    return table;
-  }
-
-  addTableElements(table, rows) {
-    table.innerHTML += rows.map(item => {
+  addTableElements(tBody, rows) {
+    tBody.innerHTML += rows.map(item => {
       return `
         <tr>
           <td>${item.name}</td>
@@ -49,7 +53,7 @@ export default class UserTable {
       `;
     }).join('');
 
-    table.addEventListener('click', (event) => {
+    tBody.addEventListener('click', (event) => {
       if (event.target.tagName === 'BUTTON') {
         event.target.closest('TR').remove();
       }  
