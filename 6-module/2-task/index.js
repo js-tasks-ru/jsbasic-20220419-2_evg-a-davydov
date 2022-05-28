@@ -13,7 +13,7 @@ export default class ProductCard {
   }
 
   _createCard(product) {
-    const card = createElement(`
+    return createElement(`
       <div class="card">
         <div class="card__top">
             <img src="/assets/images/products/${product.image}" class="card__image" alt="product">
@@ -27,8 +27,6 @@ export default class ProductCard {
         </div>
       </div>
     `);
-
-    return card;
   }
 
   _addEventProductAdd(card, product) {

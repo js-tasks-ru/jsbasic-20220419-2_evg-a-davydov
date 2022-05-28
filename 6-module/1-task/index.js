@@ -55,7 +55,7 @@ export default class UserTable {
       `;
     }).join('');
 
-    table.addEventListener('click', (event) => {
+    table.addEventListener('click', event => {
       if (event.target.tagName === 'BUTTON') {
         event.target.closest('TR').remove();
       }  

@@ -15,7 +15,7 @@ export default class Carousel {
   }
 
   _createCarousel(slides) {
-    const carousel = createElement(`
+    return createElement(`
       <div class="carousel">
         <!--Кнопки переключения-->
         <div class="carousel__arrow carousel__arrow_right">
@@ -28,8 +28,6 @@ export default class Carousel {
         <div class="carousel__inner"></div>
       </div>
     `)
-
-    return carousel;
   }
   
   _addSlides(carousel, slides) {
