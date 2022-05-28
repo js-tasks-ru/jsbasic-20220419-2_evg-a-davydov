@@ -14,6 +14,17 @@
  */
 export default class UserTable {
   constructor(rows) {
+    this.rows = rows;
+    this.table = this._createTable();
+
+    this.addTableElements(this.table, this.rows);
+  }
+
+  get elem() {
+    return this.table;
+  }
+
+  _createTable() {
     const table = document.createElement('TABLE');
     
     table.innerHTML = `
@@ -28,13 +39,7 @@ export default class UserTable {
       </thead>
     `;
 
-    this.addTableElements(table, rows);
-
-    this.table = table;
-  }
-
-  get elem() {
-    return this.table;
+    return table;
   }
 
   addTableElements(table, rows) {

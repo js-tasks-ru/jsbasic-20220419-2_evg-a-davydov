@@ -2,6 +2,17 @@ import createElement from '../../assets/lib/create-element.js';
 
 export default class ProductCard {
   constructor(product) {
+    this.product = product;
+    this.card = this._createCard(this.product);
+
+    this._addEventProductAdd(this.card, this.product);
+  }
+
+  get elem() {
+    return this.card;
+  }
+
+  _createCard(product) {
     const card = createElement(`
       <div class="card">
         <div class="card__top">
@@ -15,8 +26,12 @@ export default class ProductCard {
             </button>
         </div>
       </div>
-    `)
-   
+    `);
+
+    return card;
+  }
+
+  _addEventProductAdd(card, product) {
     const button = card.querySelector('.card__button');
     
     button.addEventListener('click', () => {
@@ -27,12 +42,5 @@ export default class ProductCard {
 
       card.dispatchEvent(productAdd);
     });
-
-    this.product = product;
-    this.card = card;
-  }
-
-  get elem() {
-    return this.card;
   }
 }

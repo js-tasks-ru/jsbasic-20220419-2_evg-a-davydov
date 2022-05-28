@@ -2,6 +2,19 @@ import createElement from '../../assets/lib/create-element.js';
 
 export default class Carousel {
   constructor(slides) {
+    this.slides = slides;
+    this.carousel = this._createCarousel();
+
+    this._addSlides(this.carousel, this.slides);
+    this._addMoveSlides(this.carousel, this.slides);
+    this._addEventProductAdd(this.carousel);
+  }
+
+  get elem() {
+    return this.carousel;
+  }
+
+  _createCarousel(slides) {
     const carousel = createElement(`
       <div class="carousel">
         <!--Кнопки переключения-->
@@ -16,6 +29,10 @@ export default class Carousel {
       </div>
     `)
 
+    return carousel;
+  }
+  
+  _addSlides(carousel, slides) {
     const inner = carousel.querySelector('.carousel__inner');
 
     inner.innerHTML += slides.map(slide => {
@@ -32,10 +49,12 @@ export default class Carousel {
         </div>
       `
     }).join('');
+  }
 
+  _addMoveSlides(carousel, slides) {
+    const inner = carousel.querySelector('.carousel__inner');
     const arrowRight = carousel.querySelector('.carousel__arrow_right');
     const arrowLeft = carousel.querySelector('.carousel__arrow_left');
-
     let positionX = 0;
 
     arrowLeft.style.display = 'none';
@@ -47,7 +66,9 @@ export default class Carousel {
 
     arrowRight.addEventListener('click', () => inner.style.transform = `translateX(${positionX -= inner.offsetWidth}px)`);
     arrowLeft.addEventListener('click', () => inner.style.transform = `translateX(${positionX += inner.offsetWidth}px)`);
+  }
 
+  _addEventProductAdd(carousel) {
     const buttons = carousel.querySelectorAll('.carousel__button');
 
     for (let button of buttons) {
@@ -60,12 +81,5 @@ export default class Carousel {
         carousel.dispatchEvent(productAdd);
       });
     }
-    
-    this.slides = slides;
-    this.carousel = carousel;
-  }
-
-  get elem() {
-    return this.carousel;
-  }
+  }  
 }
