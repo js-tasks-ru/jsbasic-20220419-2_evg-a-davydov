@@ -82,10 +82,11 @@ export default class StepSlider {
       document.addEventListener('pointermove', thumbMove);
 
       document.onpointerup = function() {
+        slider.classList.remove('slider_dragging');
+        
         fixedProgressBar();
         addEventSliderChange();
 
-        slider.classList.remove('slider_dragging');
         document.removeEventListener('pointermove', thumbMove);
         document.onpointerup = null;
       }
