@@ -16,42 +16,45 @@ export default class StepSlider {
   }
 
   _createSlider(amountSteps) {
-    const slider = createElement(`
-      <!--Корневой элемент слайдера-->
-      <div class="slider">
-
-        <!--Ползунок слайдера с активным значением-->
-        <div class="slider__thumb">
-          <span class="slider__value">0</span>
-        </div>
-
-        <!--Полоска слайдера-->
-        <div class="slider__progress"></div>
-
-        <!-- Шаги слайдера (вертикальные чёрточки) -->
-        <div class="slider__steps"></div>
-      </div>
-    `);
-
+    const slider = createSlider();
     const thumb = slider.querySelector('.slider__thumb');
     const progress = slider.querySelector('.slider__progress');
-    const containerSteps = slider.querySelector('.slider__steps');
+    const steps = slider.querySelector('.slider__steps');
 
     thumb.style.left = '0%';
     progress.style.width = '0%';
 
-    addSteps(containerSteps, amountSteps);
+    addSteps(steps, amountSteps);
 
     return slider;
 
-    function addSteps(containerSteps, amountSteps) {
+    function createSlider() {
+      return createElement(`
+        <!--Корневой элемент слайдера-->
+        <div class="slider">
+
+          <!--Ползунок слайдера с активным значением-->
+          <div class="slider__thumb">
+            <span class="slider__value">0</span>
+          </div>
+
+          <!--Полоска слайдера-->
+          <div class="slider__progress"></div>
+
+          <!-- Шаги слайдера (вертикальные чёрточки) -->
+          <div class="slider__steps"></div>
+        </div>
+      `);
+    }
+
+    function addSteps(steps, amountSteps) {
       while(amountSteps > 0) {
         const step = createElement('<span></span>');
-        containerSteps.append(step);
+        steps.append(step);
         amountSteps--;
       }
       
-      containerSteps.firstElementChild.classList.add('slider__step-active');
+      steps.firstElementChild.classList.add('slider__step-active');
     }
   }
 
@@ -63,23 +66,23 @@ export default class StepSlider {
 
       slider.querySelector('.slider__value').innerHTML = config.value;
       fixedProgressBar();
-      changeSliderSteps();
+      changeSliderStep();
       addEventSliderChange();
     });
 
     thumb.addEventListener('pointerdown', () => {
-      const thumbMove = event => {
-        config.value = defineValue(event.clientX);
-
-        slider.querySelector('.slider__value').innerHTML = config.value;
-        changeSliderSteps();
-        changeProgressBar(event);
-      }
+      let thumbMove;
 
       removeDefaultDnD();
       slider.classList.add('slider_dragging');
 
-      document.addEventListener('pointermove', thumbMove);
+      document.addEventListener('pointermove', thumbMove = event => {
+        config.value = defineValue(event.clientX);
+
+        slider.querySelector('.slider__value').innerHTML = config.value;
+        changeSliderStep();
+        changeProgressBar(event);
+      });
 
       document.onpointerup = function() {
         slider.classList.remove('slider_dragging');
@@ -144,7 +147,7 @@ export default class StepSlider {
       }
     }
 
-    function changeSliderSteps() {
+    function changeSliderStep() {
       const steps = slider.querySelector('.slider__steps').children;
 
       for (let step of steps) {
