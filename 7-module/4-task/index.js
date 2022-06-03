@@ -8,8 +8,7 @@ export default class StepSlider {
     }
 
     this.slider = this._createSlider(config.steps);
-    this._addСhangeSliderValueOnClick(this.slider, config);
-    this._addСhangeSliderValueOnDnD(this.slider, config);
+    this._addСhangeSliderValue(this.slider, config);
   }
 
   get elem() {
@@ -56,7 +55,9 @@ export default class StepSlider {
     }
   }
 
-  _addСhangeSliderValueOnClick(slider, config) {
+  _addСhangeSliderValue(slider, config) {
+    const thumb = slider.querySelector('.slider__thumb');
+
     slider.addEventListener('click', event => {
       config.value = defineValue(event.clientX);
 
@@ -66,14 +67,61 @@ export default class StepSlider {
       addEventSliderChange();
     });
 
+    thumb.addEventListener('pointerdown', () => {
+      const thumbMove = event => {
+        config.value = defineValue(event.clientX);
+
+        slider.querySelector('.slider__value').innerHTML = config.value;
+        changeSliderSteps();
+        changeProgressBar(event);
+      }
+
+      removeDefaultDnD(thumb);
+      slider.classList.add('slider_dragging');
+
+      document.addEventListener('pointermove', thumbMove);
+
+      document.onpointerup = function() {
+        fixedProgressBar();
+        addEventSliderChange();
+
+        slider.classList.remove('slider_dragging');
+        document.removeEventListener('pointermove', thumbMove);
+        document.onpointerup = null;
+      }
+    });
+
+    function removeDefaultDnD(thumb) {
+      thumb.ondragstart = function() {
+        return false;
+      };
+    }
+
     function defineValue(clickX) {
       const sliderWidth = slider.clientWidth;
       const sliderLeft = slider.getBoundingClientRect().left;
-      const steps = config.steps;
+      const steps = config.steps - 1;
   
-      const stepWidth = sliderWidth / (steps - 1);
+      const stepWidth = sliderWidth / steps;
+
+      let value = steps - Math.round((sliderWidth - (clickX - sliderLeft)) / stepWidth);
   
-      return (steps - 1) - Math.round((sliderWidth - (clickX - sliderLeft)) / stepWidth);
+      return (value < 0) ? 0
+           : (value > steps) ? steps
+           : value;
+    }
+
+    function changeProgressBar(event) {
+      const progress = slider.querySelector('.slider__progress');
+
+      let shiftX = event.clientX - slider.getBoundingClientRect().left;
+
+      let position = (shiftX < 0) ? 0
+                   : (shiftX > slider.clientWidth) ? slider.clientWidth
+                   : shiftX;
+
+      thumb.style.left = `${position / slider.clientWidth * 100}%`;
+      progress.style.width = `${position / slider.clientWidth * 100}%`;
     }
 
     function fixedProgressBar() {
@@ -114,103 +162,5 @@ export default class StepSlider {
 
       slider.dispatchEvent(sliderChange);
     }
-  }
-
-  _addСhangeSliderValueOnDnD(slider, config) {
-    const thumb = slider.querySelector('.slider__thumb');
-
-    thumb.addEventListener('pointerdown', () => {
-      const thumbMove = event => {
-        config.value = defineValue(event.clientX);
-
-        slider.querySelector('.slider__value').innerHTML = config.value;
-        changeSliderSteps();
-        changeProgressBar(event);
-      }
-
-      removeDefaultDnD(thumb);
-      slider.classList.add('slider_dragging');
-
-      document.addEventListener('pointermove', thumbMove);
-
-      document.onpointerup = function() {
-        fixedProgressBar();
-        addEventSliderChange();
-
-        slider.classList.remove('slider_dragging');
-        document.removeEventListener('pointermove', thumbMove);
-        thumb.onpointerup = null;
-      }
-
-      function removeDefaultDnD(thumb) {
-        thumb.ondragstart = function() {
-          return false;
-        };
-      }
-
-      function defineValue(clickX) {
-        const sliderWidth = slider.clientWidth;
-        const sliderLeft = slider.getBoundingClientRect().left;
-        const steps = config.steps;
-    
-        const stepWidth = sliderWidth / (steps - 1);
-        const value = (steps - 1) - Math.round((sliderWidth - (clickX - sliderLeft)) / stepWidth);
-    
-        return (value < 0) ? 0
-             : (value > steps - 1) ? steps - 1
-             : value;
-      }
-
-      function fixedProgressBar() {
-        const progress = slider.querySelector('.slider__progress');
-  
-        let position = definePercents();
-  
-        thumb.style.left = `${position}%`;
-        progress.style.width = `${position}%`;
-  
-        function definePercents() {
-          const sliderWidth = slider.clientWidth;
-          const steps = config.steps - 1;
-      
-          const stepWidth = sliderWidth / steps;
-    
-          return (stepWidth / sliderWidth * 100) * config.value;
-        }
-      }
-
-      function changeProgressBar(event) {
-        const progress = slider.querySelector('.slider__progress');
-  
-        let shiftX = event.clientX - slider.getBoundingClientRect().left;
-
-        let position = (shiftX < 0) ? 0
-                     : (shiftX > slider.clientWidth) ? slider.clientWidth
-                     : shiftX;
-  
-        thumb.style.left = `${position / slider.clientWidth * 100}%`;
-        progress.style.width = `${position / slider.clientWidth * 100}%`;
-      }
-
-      function changeSliderSteps() {
-        const steps = slider.querySelector('.slider__steps').children;
-  
-        for (let step of steps) {
-          step.classList.remove('slider__step-active');
-        }
-  
-        const activeStep = slider.querySelector(`.slider__steps span:nth-child(${config.value + 1})`); 
-        activeStep.classList.add('slider__step-active');
-      }
-
-      function addEventSliderChange() {
-        const sliderChange = new CustomEvent('slider-change', {
-          detail: config.value,
-          bubbles: true,
-        })
-  
-        slider.dispatchEvent(sliderChange);
-      }
-    })
   }
 }
