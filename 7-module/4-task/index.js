@@ -76,7 +76,7 @@ export default class StepSlider {
         changeProgressBar(event);
       }
 
-      removeDefaultDnD(thumb);
+      removeDefaultDnD();
       slider.classList.add('slider_dragging');
 
       document.addEventListener('pointermove', thumbMove);
@@ -92,7 +92,7 @@ export default class StepSlider {
       }
     });
 
-    function removeDefaultDnD(thumb) {
+    function removeDefaultDnD() {
       thumb.ondragstart = function() {
         return false;
       };
