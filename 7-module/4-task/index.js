@@ -120,7 +120,7 @@ export default class StepSlider {
     const thumb = slider.querySelector('.slider__thumb');
 
     thumb.addEventListener('pointerdown', () => {
-      const pointerMove = event => {
+      const thumbMove = event => {
         config.value = defineValue(event.clientX);
 
         slider.querySelector('.slider__value').innerHTML = config.value;
@@ -131,14 +131,14 @@ export default class StepSlider {
       removeDefaultDnD(thumb);
       slider.classList.add('slider_dragging');
 
-      document.addEventListener('pointermove', pointerMove);
+      document.addEventListener('pointermove', thumbMove);
 
       document.onpointerup = function() {
         fixedProgressBar();
         addEventSliderChange();
 
         slider.classList.remove('slider_dragging');
-        document.removeEventListener('pointermove', pointerMove);
+        document.removeEventListener('pointermove', thumbMove);
         thumb.onpointerup = null;
       }
 
