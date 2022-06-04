@@ -59,29 +59,33 @@ export default class StepSlider {
   }
 
   _addСhangeSliderValue(slider, config) {
+    const value = slider.querySelector('.slider__value');
     const thumb = slider.querySelector('.slider__thumb');
+    const progress = slider.querySelector('.slider__progress');
+    const maxSteps = config.steps - 1;
+
+    let thumbMove;
 
     slider.addEventListener('click', event => {
       config.value = defineValue(event.clientX);
 
-      slider.querySelector('.slider__value').innerHTML = config.value;
+      value.innerHTML = config.value;
       fixedProgressBar();
       changeSliderStep();
       addEventSliderChange();
     });
 
     thumb.addEventListener('pointerdown', () => {
-      let thumbMove;
-
       removeDefaultDnD();
+
       slider.classList.add('slider_dragging');
 
       document.addEventListener('pointermove', thumbMove = event => {
         config.value = defineValue(event.clientX);
 
-        slider.querySelector('.slider__value').innerHTML = config.value;
+        value.innerHTML = config.value;
         changeSliderStep();
-        changeProgressBar(event);
+        changeProgressBar(event.clientX);
       });
 
       document.onpointerup = function() {
@@ -101,50 +105,40 @@ export default class StepSlider {
       };
     }
 
-    function defineValue(clickX) {
+    function defineValue(positionX) {
+      const shiftX = positionX - slider.getBoundingClientRect().left;
       const sliderWidth = slider.clientWidth;
-      const sliderLeft = slider.getBoundingClientRect().left;
-      const steps = config.steps - 1;
-  
-      const stepWidth = sliderWidth / steps;
+      const stepWidth = sliderWidth / maxSteps;
 
-      let value = steps - Math.round((sliderWidth - (clickX - sliderLeft)) / stepWidth);
+      const value = maxSteps - Math.round((sliderWidth - shiftX) / stepWidth);
   
-      return (value < 0) ? 0
-           : (value > steps) ? steps
-           : value;
+      return (value < 0)        ? 0
+           : (value > maxSteps) ? maxSteps
+                                : value;
     }
 
-    function changeProgressBar(event) {
-      const progress = slider.querySelector('.slider__progress');
+    function changeProgressBar(positionX) {
+      const shiftX = positionX - slider.getBoundingClientRect().left;
 
-      let shiftX = event.clientX - slider.getBoundingClientRect().left;
+      const position = (shiftX < 0)                  ? 0
+                     : (shiftX > slider.clientWidth) ? slider.clientWidth
+                                                     : shiftX;
 
-      let position = (shiftX < 0) ? 0
-                   : (shiftX > slider.clientWidth) ? slider.clientWidth
-                   : shiftX;
+      const positionPercent = calcPercent(position, slider.clientWidth);
 
-      thumb.style.left = `${position / slider.clientWidth * 100}%`;
-      progress.style.width = `${position / slider.clientWidth * 100}%`;
+      thumb.style.left = `${positionPercent}%`;
+      progress.style.width = `${positionPercent}%`;
     }
 
     function fixedProgressBar() {
-      const thumb = slider.querySelector('.slider__thumb');
-      const progress = slider.querySelector('.slider__progress');
+      const sliderWidth = slider.clientWidth;
+      const stepWidth = sliderWidth / maxSteps;
+      const stepWidthPercent = calcPercent(stepWidth, sliderWidth);
 
-      let leftPercents = definePercents(slider, config);
+      const position = stepWidthPercent * config.value;
 
-      thumb.style.left = `${leftPercents}%`;
-      progress.style.width = `${leftPercents}%`;
-
-      function definePercents() {
-        const sliderWidth = slider.clientWidth;
-        const steps = config.steps;
-    
-        const stepWidth = sliderWidth / (steps - 1);
-  
-        return (stepWidth / sliderWidth * 100) * config.value;
-      }
+      thumb.style.left = `${position}%`;
+      progress.style.width = `${position}%`;
     }
 
     function changeSliderStep() {
@@ -165,6 +159,10 @@ export default class StepSlider {
       })
 
       slider.dispatchEvent(sliderChange);
+    }
+
+    function calcPercent(value, maxValue) {
+      return value / maxValue * 100;
     }
   }
 }
