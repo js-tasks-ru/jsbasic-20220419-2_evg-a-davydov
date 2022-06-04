@@ -70,7 +70,7 @@ export default class StepSlider {
       config.value = defineValue(event.clientX);
 
       value.innerHTML = config.value;
-      fixedProgressBar();
+      fixedChangeProgressBar();
       changeSliderStep();
       addEventSliderChange();
     });
@@ -85,13 +85,13 @@ export default class StepSlider {
 
         value.innerHTML = config.value;
         changeSliderStep();
-        changeProgressBar(event.clientX);
+        flexChangeProgressBar(event.clientX);
       });
 
       document.onpointerup = function() {
         slider.classList.remove('slider_dragging');
         
-        fixedProgressBar();
+        fixedChangeProgressBar();
         addEventSliderChange();
 
         document.removeEventListener('pointermove', thumbMove);
@@ -117,7 +117,7 @@ export default class StepSlider {
                                 : value;
     }
 
-    function changeProgressBar(positionX) {
+    function flexChangeProgressBar(positionX) {
       const shiftX = positionX - slider.getBoundingClientRect().left;
 
       const position = (shiftX < 0)                  ? 0
@@ -130,7 +130,7 @@ export default class StepSlider {
       progress.style.width = `${positionPercent}%`;
     }
 
-    function fixedProgressBar() {
+    function fixedChangeProgressBar() {
       const sliderWidth = slider.clientWidth;
       const stepWidth = sliderWidth / maxSteps;
       const stepWidthPercent = calcPercent(stepWidth, sliderWidth);
