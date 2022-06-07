@@ -40,5 +40,45 @@ export default class CartIcon {
 
   updatePosition() {
     // ваш код ...
+    if ( isVisible(this.elem) && isDesktop() ){
+      
+      if ( isNotMarginTop(this.elem) ) {
+        const marginLeft = document.querySelector('.container').getBoundingClientRect().right + 20;
+        const marginRight = document.documentElement.clientWidth - this.elem.offsetWidth - 10;
+        const position = Math.min(marginLeft, marginRight);
+
+        Object.assign(this.elem.style, {
+          position: 'fixed',
+          top: '50px',
+          zIndex: 1e3,
+          right: '10px',
+          left: `${position}px`,
+        });
+      } else {
+        Object.assign(this.elem.style, {
+          position: '',
+          top: '',
+          left: '',
+          zIndex: '',
+        });
+      }
+    }
+
+    function isVisible(elem) {
+      return elem.offsetWidth && elem.offsetHeight;
+    }
+
+    function isDesktop() {
+      const documentWidth = Math.max(
+        document.body.scrollWidth, document.documentElement.scrollWidth,
+        document.body.offsetWidth, document.documentElement.offsetWidth,
+        document.body.clientWidth, document.documentElement.clientWidth
+      );
+      return documentWidth > 767;
+    }
+
+    function isNotMarginTop(elem) {
+      return elem.getBoundingClientRect().top < window.pageYOffset;
+    }
   }
 }
