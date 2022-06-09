@@ -60,7 +60,6 @@ class Filters {
       }
 
       if (filter === 'maxSpiciness') {
-        console.log(filters[filter]);
         this.lessThen(filters[filter]);
       }
 
