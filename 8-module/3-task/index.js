@@ -6,7 +6,7 @@ export default class Cart {
   }
 
   addProduct(product) {
-     // ваш код
+    // ваш код
     if ( !(product) ) {
       return;
     }
